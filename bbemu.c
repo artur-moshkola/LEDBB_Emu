@@ -22,7 +22,7 @@ int main() {
     bb_blink_init();
     bb_keys_init();
     bb_led_init();
-    bb_led_set_handler(bb_led_fhdl_running);
+    bb_led_set_handler(bb_led_fhdl_xmass);
 
     uint8_t failed = 0;
     uint32_t tick;
@@ -49,7 +49,7 @@ int main() {
         if (bb_keys_check_reset(BTN_X)) {
             bb_blink_pattern = 0b101010;
             iatick = btick = tick; bi = 1;
-            bb_led_set_handler(bb_led_fhdl_running);
+            bb_led_set_handler(bb_led_fhdl_xmass);
         }
         if (bb_keys_check_reset(BTN_R)) {
             bb_blink_pattern = 0b10101010;
@@ -79,7 +79,7 @@ int main() {
             bi = 0;
             bb_blink_init();
         }
-        if (tick - iatick > 90000) {
+        if (tick - iatick > 1800000) {
             bb_led_set_handler(bb_led_fhdl_standby);
         }
 

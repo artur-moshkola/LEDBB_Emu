@@ -29,10 +29,10 @@
 
 extern ws2812_color bb_led_chromafill_color;
 
-#define BB_LED_STB_FRAMES 64
+#define BB_LED_STB_FRAMES 16
 
 static const ws2812_color COLOR_OFF = { 0, 0, 0 };
-static const ws2812_color COLOR_STB = { 8, 8, 0 };
+static const ws2812_color COLOR_STB = { 2, 2, 0 };
 
 void bb_led_init(void);
 void bb_led_tick(void);
@@ -41,3 +41,5 @@ void bb_led_set_handler(uint8_t (*handler)(uint8_t));
 uint8_t bb_led_fhdl_running(uint8_t init);
 uint8_t bb_led_fhdl_chromafill(uint8_t ihndlr);
 uint8_t bb_led_fhdl_standby(uint8_t ihndlr);
+
+uint8_t bb_led_fhdl_xmass(uint8_t ihndlr);
