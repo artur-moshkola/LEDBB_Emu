@@ -22,7 +22,7 @@ int main() {
     bb_blink_init();
     bb_keys_init();
     bb_led_init();
-    bb_led_set_handler(bb_led_fhdl_xmass);
+    bb_led_set_handler(bb_led_fhdl_running);
 
     uint8_t failed = 0;
     uint32_t tick;
@@ -78,6 +78,9 @@ int main() {
         if (bi && (HAL_GetTick() - btick > 5000)) {
             bi = 0;
             bb_blink_init();
+        }
+        if (tick - iatick > 90000 && bb_led_is_handler(bb_led_fhdl_chromafill)) {
+            bb_led_set_handler(bb_led_fhdl_xmass);
         }
         if (tick - iatick > 1800000) {
             bb_led_set_handler(bb_led_fhdl_standby);

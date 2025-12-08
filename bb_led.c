@@ -43,6 +43,10 @@ void bb_led_set_handler(uint8_t (*handler)(uint8_t)) {
 	bb_led_frame_handler = handler;
 }
 
+uint8_t bb_led_is_handler(uint8_t (*handler)(uint8_t)) {
+	return bb_led_frame_handler == handler;
+}
+
 uint32_t bb_led_no(uint32_t x, uint32_t y) {
 	return (y | 1) * BB_LED_W + (((y & 1) - 1) ^ x);
 }
@@ -173,23 +177,22 @@ uint8_t bb_led_fhdl_xmass(uint8_t init) {
 		cR, cG, cY, cB
 	};
 
-	static ws2812_color fb[BB_LED_H][BB_LED_W];
-
 	static uint8_t snow[BB_LED_H][BB_LED_W];
 
 	if (init) {
-		memcpy(fb, bg, sizeof(bg));
-		
-		for (int i = 0; i < sizeof(balls_places) / sizeof(struct xy); i++) {
-			int brnd = rand();
-			if (brnd & 1) continue;
-			fb[balls_places[i].y][balls_places[i].x] = ball_colors[(brnd >> 4) & 3];
-		}
-
-		bb_led_set_bitmap(fb);
+		bb_led_set_bitmap(bg);
 		changed = 1;
 
 		memset(snow, 0, sizeof(snow));
+	}
+
+	if (frame % 5 == 0) {
+		for (int i = 0; i < sizeof(balls_places) / sizeof(struct xy); i++) {
+			struct xy place = balls_places[i];
+			if (snow[place.y][place.x]) continue;
+			int brnd = rand();
+			ws2812_set_led(bb_led_no(place.x, place.y), ball_colors[brnd & 3]);
+		}
 	}
 	
 	if (frame % 20 == 0) {
@@ -211,7 +214,21 @@ uint8_t bb_led_fhdl_xmass(uint8_t init) {
 
 		for (int x = 0; x < BB_LED_W; x++) {
 			for (int y = 0; y < BB_LED_H; y++) {
-				ws2812_set_led(bb_led_no(x, y), snow[y][x] ? (struct ws2812_color)cW : fb[y][x]);
+				int is_ball = 0;
+				ws2812_color clr;
+				for (int i = 0; i < sizeof(balls_places) / sizeof(struct xy); i++) {
+					if (balls_places[i].x == x && balls_places[i].y == y) {
+						clr = ball_colors[rand() & 3];
+						is_ball = 1;
+						break;
+					}
+				}
+				if (snow[y][x]) {
+					clr = (struct ws2812_color)cW;
+				} else if (!is_ball) {
+					clr = bg[y][x];
+				}
+				ws2812_set_led(bb_led_no(x, y), clr);
 			}
 		}
 

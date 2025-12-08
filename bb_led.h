@@ -37,6 +37,7 @@ static const ws2812_color COLOR_STB = { 2, 2, 0 };
 void bb_led_init(void);
 void bb_led_tick(void);
 void bb_led_set_handler(uint8_t (*handler)(uint8_t));
+uint8_t bb_led_is_handler(uint8_t (*handler)(uint8_t));
 
 uint8_t bb_led_fhdl_running(uint8_t init);
 uint8_t bb_led_fhdl_chromafill(uint8_t ihndlr);
